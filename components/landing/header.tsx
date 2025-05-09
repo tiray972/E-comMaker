@@ -29,7 +29,7 @@ export default function LandingHeader() {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-2xl font-bold flex items-center">
           <span className="text-primary mr-1">Buildr</span>
-          <span className="text-muted-foreground">CMSS</span>
+          <span className="text-muted-foreground">CMS</span>
         </Link>
         
         {/* Desktop Navigation */}
