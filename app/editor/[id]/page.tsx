@@ -15,3 +15,9 @@ export default function EditorPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+export async function generateStaticParams() {
+  // Remplace ces valeurs par les IDs réels de tes sites, si tu les récupères depuis une base
+  const siteIds = ['1', '2', '3'];
+
+  return siteIds.map((id) => ({ id }));
+}
