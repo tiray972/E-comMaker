@@ -22,12 +22,11 @@ import {
 
 export default function SiteEditorSidebar() {
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const componentCategories = [
     {
       name: 'Layout',
       components: [
-        { id: 'section', name: 'Section', icon: <Layout /> },
         { id: 'columns', name: 'Columns', icon: <Columns /> },
         { id: 'container', name: 'Container', icon: <LayoutGrid /> },
       ]
@@ -66,17 +65,7 @@ export default function SiteEditorSidebar() {
       ]
     },
   ];
-  
-  const sections = [
-    { id: 'header', name: 'Header', img: 'https://images.pexels.com/photos/4065400/pexels-photo-4065400.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { id: 'hero', name: 'Hero', img: 'https://images.pexels.com/photos/6347738/pexels-photo-6347738.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { id: 'features', name: 'Features', img: 'https://images.pexels.com/photos/6177688/pexels-photo-6177688.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { id: 'gallery', name: 'Gallery', img: 'https://images.pexels.com/photos/5541019/pexels-photo-5541019.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { id: 'testimonials', name: 'Testimonials', img: 'https://images.pexels.com/photos/5604511/pexels-photo-5604511.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { id: 'contact', name: 'Contact', img: 'https://images.pexels.com/photos/4065615/pexels-photo-4065615.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-    { id: 'footer', name: 'Footer', img: 'https://images.pexels.com/photos/6508165/pexels-photo-6508165.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
-  ];
-  
+
   const filterComponents = (category: any) => {
     if (!searchTerm) return category.components;
     return category.components.filter(comp => 
@@ -100,12 +89,9 @@ export default function SiteEditorSidebar() {
       </div>
       
       <Tabs defaultValue="components" className="flex-1 flex flex-col">
-        <TabsList className="grid grid-cols-2 h-11 rounded-none border-b bg-muted/30">
+        <TabsList className="h-11 rounded-none border-b bg-muted/30">
           <TabsTrigger value="components" className="rounded-none data-[state=active]:bg-background">
             Components
-          </TabsTrigger>
-          <TabsTrigger value="sections" className="rounded-none data-[state=active]:bg-background">
-            Sections
           </TabsTrigger>
         </TabsList>
         
@@ -127,6 +113,10 @@ export default function SiteEditorSidebar() {
                           key={component.id} 
                           className="flex items-center p-2 rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground cursor-grab transition-colors"
                           draggable
+                          onDragStart={(e) => {
+                            e.dataTransfer.effectAllowed = "move";
+                            e.dataTransfer.setData('component/type', component.id);
+                          }}
                         >
                           <div className="mr-2 text-muted-foreground">{component.icon}</div>
                           <span className="text-sm">{component.name}</span>
@@ -136,29 +126,6 @@ export default function SiteEditorSidebar() {
                   </div>
                 );
               })}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="sections" className="m-0 p-0">
-            <div className="p-4">
-              <div className="grid grid-cols-2 gap-2">
-                {sections.map((section) => (
-                  <div 
-                    key={section.id}
-                    className="group border rounded-md overflow-hidden bg-background hover:border-primary cursor-grab transition-all"
-                    draggable
-                  >
-                    <div className="aspect-video relative overflow-hidden">
-                      <img 
-                        src={section.img} 
-                        alt={section.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div className="p-2 text-xs font-medium">{section.name}</div>
-                  </div>
-                ))}
-              </div>
             </div>
           </TabsContent>
         </ScrollArea>
