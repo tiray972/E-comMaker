@@ -1,0 +1,40 @@
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
+import { Shop } from "./types"; // À créer pour typer les shops
+
+const db = getFirestore();
+const shopsCol = collection(db, "shops");
+
+// Créer une boutique
+export async function createShop(shop: Shop) {
+  const shopRef = doc(shopsCol);
+  await setDoc(shopRef, {
+    ...shop,
+    createdAt: Timestamp.now(),
+  });
+  return shopRef;
+}
+
+// Lire une boutique par ID
+export async function getShop(shopId: string) {
+  const shopRef = doc(shopsCol, shopId);
+  const snap = await getDoc(shopRef);
+  return snap.exists() ? snap.data() : null;
+}
+
+// Lire toutes les boutiques
+export async function getAllShops() {
+  const snap = await getDocs(shopsCol);
+  return snap.docs.map(doc => doc.data());
+}
+
+// Mettre à jour une boutique
+export async function updateShop(shopId: string, data: Partial<Shop>) {
+  const shopRef = doc(shopsCol, shopId);
+  await updateDoc(shopRef, data);
+}
+
+// Supprimer une boutique
+export async function deleteShop(shopId: string) {
+  const shopRef = doc(shopsCol, shopId);
+  await deleteDoc(shopRef);
+}
