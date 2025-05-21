@@ -1,5 +1,9 @@
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
+<<<<<<< HEAD
 import { Shop } from "./types";
+=======
+import { Shop } from "./types"; // À créer pour typer les shops
+>>>>>>> 19fe231 (push user & shops)
 
 const db = getFirestore();
 const shopsCol = collection(db, "shops");
@@ -10,7 +14,10 @@ export async function createShop(shop: Shop) {
   await setDoc(shopRef, {
     ...shop,
     createdAt: Timestamp.now(),
+<<<<<<< HEAD
     stripeAccountStatus: shop.stripeAccountId ? 'pending' : undefined,
+=======
+>>>>>>> 19fe231 (push user & shops)
   });
   return shopRef;
 }
@@ -25,7 +32,11 @@ export async function getShop(shopId: string) {
 // Lire toutes les boutiques
 export async function getAllShops() {
   const snap = await getDocs(shopsCol);
+<<<<<<< HEAD
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+=======
+  return snap.docs.map(doc => doc.data());
+>>>>>>> 19fe231 (push user & shops)
 }
 
 // Mettre à jour une boutique
@@ -34,6 +45,7 @@ export async function updateShop(shopId: string, data: Partial<Shop>) {
   await updateDoc(shopRef, data);
 }
 
+<<<<<<< HEAD
 // Mettre à jour le statut Stripe d'une boutique
 export async function updateShopStripeStatus(shopId: string, stripeData: {
   accountId: string;
@@ -49,6 +61,8 @@ export async function updateShopStripeStatus(shopId: string, stripeData: {
   });
 }
 
+=======
+>>>>>>> 19fe231 (push user & shops)
 // Supprimer une boutique
 export async function deleteShop(shopId: string) {
   const shopRef = doc(shopsCol, shopId);
