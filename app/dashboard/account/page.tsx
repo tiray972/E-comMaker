@@ -10,7 +10,10 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Pencil, Settings, X } from "lucide-react";
+<<<<<<< HEAD
 import { useTheme } from "next-themes";
+=======
+>>>>>>> cd38d92 (creation des parametres, et du profile avec banniere et photo de profil, truc a changer sa marche pas)
 
 export default function ProfilePage() {
   const [user, setUser] = useState<import("firebase/auth").User | null>(null);
@@ -23,7 +26,10 @@ export default function ProfilePage() {
   const [showSettings, setShowSettings] = useState(false);
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
+<<<<<<< HEAD
   const { theme } = useTheme();
+=======
+>>>>>>> cd38d92 (creation des parametres, et du profile avec banniere et photo de profil, truc a changer sa marche pas)
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -109,7 +115,11 @@ export default function ProfilePage() {
           <Button
             variant="ghost"
             size="icon"
+<<<<<<< HEAD
             className={`absolute right-4 top-4 ${theme === "dark" ? "bg-black text-white hover:bg-black/80" : "bg-white text-black hover:bg-gray-200"}`}
+=======
+            className="absolute right-4 top-4 bg-white/80 hover:bg-white"
+>>>>>>> cd38d92 (creation des parametres, et du profile avec banniere et photo de profil, truc a changer sa marche pas)
             onClick={() => setShowSettings(true)}
             type="button"
           >
