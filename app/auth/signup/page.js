@@ -224,7 +224,7 @@ export default function SignUp() {
         </form>
         <div className="flex justify-center mt-6">
           <Link
-            href={"/app/auth/signup2"}
+            href={"/auth/login"}
             className={`text-sm underline transition-colors ${
               theme === "dark"
                 ? "text-teal-300 hover:text-teal-400"
