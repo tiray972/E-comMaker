@@ -71,7 +71,7 @@ export default function SignUp() {
       await saveUserToFirestore(user);
 
       // Redirect to the dashboard or another page
-      router.push("/en/auth/signup2");
+      router.push("/app/auth/signup2");
     } catch (error) {
       console.error("Sign-up error:", error);
       if (error.code === "auth/email-already-in-use") {
@@ -97,7 +97,7 @@ export default function SignUp() {
       await saveUserToFirestore(user);
 
       // Redirect to the dashboard or another page
-      router.push("/en/auth/signup2");
+      router.push("/app/auth/signup2");
     } catch (error) {
       console.error("Google sign-up error:", error);
       setError("An error occurred during Google sign-up.");
