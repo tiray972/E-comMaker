@@ -1,4 +1,4 @@
-export type AppUser = {
+export type User = {
   uid: string;
   email: string;
   role: "admin" | "seller" | "customer";
