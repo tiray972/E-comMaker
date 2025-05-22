@@ -9,13 +9,13 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { app } from "@/lib/firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
-import { User } from "@/lib/firebase/users/types";
+import type { AppUser } from "@/lib/firebase/users/types";
 
 export default function LandingHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<import("firebase/auth").User | null>(null); // typed as User | null
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [userName, setUserName] = useState("");
@@ -34,7 +34,8 @@ export default function LandingHeader() {
         try {
           const userDoc = await getDoc(doc(db, "users", user.uid));
           if (userDoc.exists()) {
-            setUserName(userDoc.data().name || "");
+            const userData = userDoc.data() as AppUser;
+            setUserName(userData.username || userData.displayName || user.email?.split("@")[0] || "Utilisateur");
           } else {
             setUserName(user.displayName || user.email?.split("@")[0] || "Utilisateur");
           }
