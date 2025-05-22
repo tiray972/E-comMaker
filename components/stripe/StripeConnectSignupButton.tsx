@@ -44,9 +44,12 @@ export function StripeConnectSignupButton({ onAccountCreated }: StripeConnectSig
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 42829ef (stripe finish)
+=======
+>>>>>>> 78beb53 (push en ligne whith env)
 // utisation dans une page annexxe
 // import { StripeConnectSignupButton } from '@/components/stripe/StripeConnectSignupButton';
 // import { updateUser } from '@/lib/firebase/users'; // adapte le chemin selon ton projet
