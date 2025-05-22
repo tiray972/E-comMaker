@@ -57,10 +57,10 @@ export default function LandingHeader() {
           >
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
-          <Link href="/login">
+          <Link href="/auth/login">
             <Button variant="ghost">Login</Button>
           </Link>
-          <Link href="/register">
+          <Link href="/auth/signup">
             <Button>Get Started</Button>
           </Link>
         </div>
