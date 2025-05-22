@@ -134,7 +134,7 @@ export default function LandingHeader() {
                     Dashboard
                   </Link>
                   <Link
-                    href="/profile"
+                    href="/dashboard/account"
                     className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
@@ -234,7 +234,7 @@ export default function LandingHeader() {
                         Dashboard
                       </Link>
                       <Link
-                        href="/profile"
+                        href="/dashboard/account"
                         className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
                         onClick={() => { setMenuOpen(false); setMobileMenuOpen(false); }}
                       >
