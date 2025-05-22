@@ -7,14 +7,18 @@ import { Menu, X, Moon, Sun, User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { app } from "@/lib/firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase/firebase";
+import { User } from "@/lib/firebase/users/types";
 
 export default function LandingHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -24,8 +28,22 @@ export default function LandingHeader() {
 
   useEffect(() => {
     const auth = getAuth(app);
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            setUserName(userDoc.data().name || "");
+          } else {
+            setUserName(user.displayName || user.email?.split("@")[0] || "Utilisateur");
+          }
+        } catch {
+          setUserName(user.displayName || user.email?.split("@")[0] || "Utilisateur");
+        }
+      } else {
+        setUserName("");
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -103,7 +121,7 @@ export default function LandingHeader() {
                 onClick={() => setMenuOpen((v) => !v)}
               >
                 <User className="w-5 h-5" />
-                Bonjour, {user.displayName || user.email?.split("@")[0] || "Utilisateur"}
+                Bonjour, {userName || "Utilisateur"}
               </Button>
               {menuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded shadow-lg z-50">
@@ -203,7 +221,7 @@ export default function LandingHeader() {
                     onClick={() => setMenuOpen((v) => !v)}
                   >
                     <User className="w-5 h-5" />
-                    Bonjour, {user.displayName || user.email?.split("@")[0] || "Utilisateur"}
+                    Bonjour, {userName || "Utilisateur"}
                   </Button>
                   {menuOpen && (
                     <div className="mt-2 w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded shadow-lg z-50">

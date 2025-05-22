@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes"; // Ajout du hook
 
 export default function SignUp() {
+  const [name, setName] = useState(""); // Ajout du champ nom
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,7 +31,7 @@ export default function SignUp() {
         const newUser = {
           uid: user.uid,
           email: user.email,
-          name: user.displayName || "User", // Take the user's name or a default name
+          name: name || user.displayName || "User", // Utilise le nom saisi
           createdAt: new Date(), // Creation date
         };
 
@@ -51,15 +52,15 @@ export default function SignUp() {
     setIsLoading(true);
 
     // Check for empty fields
-    if (!email || !password || !confirmPassword) {
-      setError("Please fill in all fields.");
+    if (!name || !email || !password || !confirmPassword) {
+      setError("Veuillez remplir tous les champs.");
       setIsLoading(false);
       return;
     }
 
     // Check if passwords match
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("Les mots de passe ne correspondent pas.");
       setIsLoading(false);
       return;
     }
@@ -76,9 +77,9 @@ export default function SignUp() {
     } catch (error) {
       console.error("Sign-up error:", error);
       if (error.code === "auth/email-already-in-use") {
-        setError("This email is already in use.");
+        setError("Cet email est déjà utilisé.");
       } else {
-        setError("An error occurred. Please try again.");
+        setError("Une erreur est survenue. Veuillez réessayer.");
       }
     } finally {
       setIsLoading(false);
@@ -101,7 +102,7 @@ export default function SignUp() {
       router.push("/app/auth/signup2");
     } catch (error) {
       console.error("Google sign-up error:", error);
-      setError("An error occurred during Google sign-up.");
+      setError("Une erreur est survenue lors de l'inscription Google.");
     } finally {
       setIsLoading(false);
     }
@@ -149,6 +150,18 @@ export default function SignUp() {
             </p>
           )}
 
+          <input
+            type="text"
+            placeholder="Votre nom"
+            className={`border p-2 w-full rounded outline-none transition-all ${
+              theme === "dark"
+                ? "bg-neutral-800 border-neutral-700 text-white placeholder-gray-400 focus:border-teal-400"
+                : "bg-white border-blue-200 text-gray-900 focus:border-teal-400"
+            }`}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoComplete="name"
+          />
           <input
             type="email"
             placeholder="Adresse e-mail"
