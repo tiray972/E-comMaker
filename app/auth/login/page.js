@@ -59,7 +59,7 @@ export default function Login() {
       className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${
         theme === "dark"
           ? "bg-black"
-          : "bg-gradient-to-br from-teal-100 via-blue-100 to-white"
+          : "bg-white"
       }`}
     >
       <div className="w-full max-w-md">
