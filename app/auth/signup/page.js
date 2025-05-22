@@ -27,11 +27,11 @@ export default function SignUp() {
       const userSnap = await getDoc(userDocRef); // Check if the user already exists in Firestore
 
       if (!userSnap.exists()) {
-        // If the user doesn't exist in Firestore, create them
+        // Enregistre le nom dans le champ "username"
         const newUser = {
           uid: user.uid,
           email: user.email,
-          name: name || user.displayName || "User", // Utilise le nom saisi
+          username: name || user.displayName || "User", // <-- ici username
           createdAt: new Date(), // Creation date
         };
 

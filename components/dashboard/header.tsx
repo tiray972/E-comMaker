@@ -17,17 +17,34 @@ import { useTheme } from 'next-themes';
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { app } from "@/lib/firebase/firebase";
 import { useRouter } from "next/navigation";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase/firebase";
 
 export default function DashboardHeader() {
   const { theme, setTheme } = useTheme();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<import("firebase/auth").User | null>(null);
+  const [userName, setUserName] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     const auth = getAuth(app);
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
+      if (firebaseUser) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+          if (userDoc.exists()) {
+            setUserName(userDoc.data().name || "");
+          } else {
+            setUserName(firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Utilisateur");
+          }
+        } catch {
+          setUserName(firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Utilisateur");
+        }
+      } else {
+        setUserName("");
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -35,6 +52,17 @@ export default function DashboardHeader() {
   const handleLogout = async () => {
     await signOut(getAuth(app));
     router.push("/auth/login");
+  };
+
+  // Pour l'avatar fallback (initiales)
+  const getInitials = () => {
+    if (userName) {
+      return userName.split(" ").map(n => n[0]).join("").toUpperCase();
+    }
+    if (user?.email) {
+      return user.email[0].toUpperCase();
+    }
+    return "U";
   };
 
   return (
@@ -88,14 +116,10 @@ export default function DashboardHeader() {
                 <Avatar className="h-9 w-9">
                   <AvatarImage
                     src={user?.photoURL || undefined}
-                    alt={user?.displayName || user?.email || "User"}
+                    alt={userName || user?.displayName || user?.email || "User"}
                   />
                   <AvatarFallback>
-                    {user?.displayName
-                      ? user.displayName.split(" ").map(n => n[0]).join("").toUpperCase()
-                      : user?.email
-                        ? user.email[0].toUpperCase()
-                        : "U"}
+                    {getInitials()}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -104,7 +128,7 @@ export default function DashboardHeader() {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
-                    {user?.displayName || "Utilisateur"}
+                    {userName || "Utilisateur"}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
                     {user?.email || ""}
