@@ -1,6 +1,7 @@
 'use client';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useEffect, useState } from 'react';
 import { StripeConnectSignupButton } from '@/components/stripe/StripeConnectSignupButton';
 import { auth } from '@/lib/firebase/firebase';
@@ -73,29 +74,33 @@ export default function Home() {
 
   const stripeConnectInstance = useStripeConnect(connectedAccountId);
 >>>>>>> a3f155e (update stripe)
+=======
+import { useEffect, useState } from 'react';
+import { StripeConnectSignupButton } from '@/components/stripe/StripeConnectSignupButton';
+import { updateUser } from '@/lib/firebase/users';
+// Importe ton instance Firebase Auth
+import { auth } from '@/lib/firebase/firebase'; // adapte le chemin selon ton projet
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 
-  const handleAccountCreation = async () => {
-    try {
-      setAccountCreatePending(true);
-      setError(false);
+export default function Page() {
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+>>>>>>> 3f2027a (	modified:   app/stripe/page.tsx)
 
-      const response = await fetch("/api/account", { method: "POST" });
-      const json = await response.json();
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
-      if (json.account) {
-        setConnectedAccountId(json.account);
-      } else {
-        setError(true);
-      }
-    } catch (err) {
-      console.error("Error creating account:", err);
-      setError(true);
-    } finally {
-      setAccountCreatePending(false);
-    }
+  const handleAccountCreated = async (accountId: string) => {
+    if (!user) return;
+    await updateUser(user.uid, { stripeAccountId: accountId });
+    alert('Compte Stripe créé et enregistré !');
   };
 
   return (
+<<<<<<< HEAD
 <<<<<<< HEAD
     <div className="max-w-2xl mx-auto p-8">
       <h1 className="text-2xl font-bold mb-6">Stripe Connect Integration</h1>
@@ -181,6 +186,11 @@ export default function Home() {
           <StripeConnectSignupButton onAccountCreated={handleAccountCreated} />
         </div>
       )}
+=======
+    <div>
+      <h2>Inscription Stripe Connect</h2>
+      <StripeConnectSignupButton onAccountCreated={handleAccountCreated} />
+>>>>>>> 3f2027a (	modified:   app/stripe/page.tsx)
     </div>
   );
 }
