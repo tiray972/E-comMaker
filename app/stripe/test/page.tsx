@@ -15,10 +15,14 @@ export default function StripeTestPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
 <<<<<<< HEAD
+<<<<<<< HEAD
           connectedAccountId: 'acct_1RRZVePr6yLz3vxE',
 =======
           connectedAccountId: 'acct_1RRVdMPu9vr1dayc',
 >>>>>>> b1f8a01 (stripe 2mepart not finish)
+=======
+          connectedAccountId: 'acct_1RRYTyQ9pai1D0sw',
+>>>>>>> a3f155e (update stripe)
           line_items: [
             {
               price_data: {
