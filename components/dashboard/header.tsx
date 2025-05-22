@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,10 +14,28 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Bell, Moon, Sun, User, Settings, LogOut, MenuIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { app } from "@/lib/firebase/firebase";
+import { useRouter } from "next/navigation";
 
 export default function DashboardHeader() {
   const { theme, setTheme } = useTheme();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [user, setUser] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut(getAuth(app));
+    router.push("/auth/login");
+  };
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30">
@@ -68,17 +86,28 @@ export default function DashboardHeader() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="User" />
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarImage
+                    src={user?.photoURL || undefined}
+                    alt={user?.displayName || user?.email || "User"}
+                  />
+                  <AvatarFallback>
+                    {user?.displayName
+                      ? user.displayName.split(" ").map(n => n[0]).join("").toUpperCase()
+                      : user?.email
+                        ? user.email[0].toUpperCase()
+                        : "U"}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Jane Doe</p>
+                  <p className="text-sm font-medium leading-none">
+                    {user?.displayName || "Utilisateur"}
+                  </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    jane.doe@example.com
+                    {user?.email || ""}
                   </p>
                 </div>
               </DropdownMenuLabel>
@@ -96,11 +125,9 @@ export default function DashboardHeader() {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </Link>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
