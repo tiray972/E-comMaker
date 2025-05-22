@@ -3,6 +3,7 @@ export type Shop = {
   description?: string;
   logoUrl?: string;
   ownerId: string;
+  stripeAccountId?: string;
   slug: string;
   createdAt?: any; // Timestamp
   isActive: boolean;
