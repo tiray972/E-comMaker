@@ -16,6 +16,7 @@ export default function StripeTestPage() {
         body: JSON.stringify({
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
           connectedAccountId: 'acct_1RRZVePr6yLz3vxE',
 =======
           connectedAccountId: 'acct_1RRVdMPu9vr1dayc',
@@ -23,6 +24,9 @@ export default function StripeTestPage() {
 =======
           connectedAccountId: 'acct_1RRYTyQ9pai1D0sw',
 >>>>>>> a3f155e (update stripe)
+=======
+          connectedAccountId: 'acct_1RRZVePr6yLz3vxE',
+>>>>>>> 42829ef (stripe finish)
           line_items: [
             {
               price_data: {
