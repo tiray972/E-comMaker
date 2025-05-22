@@ -14,7 +14,7 @@ export default function StripeTestPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          connectedAccountId: 'acct_1RRYTyQ9pai1D0sw',
+          connectedAccountId: 'acct_1RRZVePr6yLz3vxE',
           line_items: [
             {
               price_data: {
