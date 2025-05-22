@@ -35,7 +35,14 @@ export default function DashboardHeader() {
         try {
           const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
           if (userDoc.exists()) {
-            setUserName(userDoc.data().name || "");
+            const userData = userDoc.data();
+            setUserName(
+              userData.username ||
+              userData.displayName ||
+              firebaseUser.displayName ||
+              firebaseUser.email?.split("@")[0] ||
+              "Utilisateur"
+            );
           } else {
             setUserName(firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "Utilisateur");
           }
@@ -112,7 +119,7 @@ export default function DashboardHeader() {
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+              <Button variant="ghost" className="relative h-9 w-9 rounded-full flex items-center gap-2 px-2">
                 <Avatar className="h-9 w-9">
                   <AvatarImage
                     src={user?.photoURL || undefined}
@@ -139,7 +146,7 @@ export default function DashboardHeader() {
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/account">
                   <User className="mr-2 h-4 w-4" />
-                  <span>Account</span>
+                  <span>Profil</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
