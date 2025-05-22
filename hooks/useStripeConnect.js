@@ -5,30 +5,29 @@ export const useStripeConnect = (connectedAccountId) => {
   const [stripeConnectInstance, setStripeConnectInstance] = useState();
 
   useEffect(() => {
-    if (connectedAccountId) {
-      const fetchClientSecret = async () => {
-        const response = await fetch("/api/account_session", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            account: connectedAccountId,
-          }),
-        });
+    if (!connectedAccountId) return;
 
-        if (!response.ok) {
-          // Handle errors on the client side here
-          const { error } = await response.json();
-          throw ("An error occurred: ", error);
-        } else {
+    const initialize = async () => {
+      try {
+        const fetchClientSecret = async () => {
+          const response = await fetch("/api/account_session", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ account: connectedAccountId }),
+          });
+
+          if (!response.ok) {
+            const { error } = await response.json();
+            throw new Error(`An error occurred: ${error}`);
+          }
+
           const { client_secret: clientSecret } = await response.json();
           return clientSecret;
-        }
-      };
+        };
 
-      setStripeConnectInstance(
-        loadConnectAndInitialize({
+        const connectInstance = await loadConnectAndInitialize({
           publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
           fetchClientSecret,
           appearance: {
@@ -37,12 +36,16 @@ export const useStripeConnect = (connectedAccountId) => {
               colorPrimary: "#635BFF",
             },
           },
-        })
-      );
-    }
+        });
+
+        setStripeConnectInstance(connectInstance);
+      } catch (error) {
+        console.error("Stripe Connect initialization error:", error);
+      }
+    };
+
+    initialize();
   }, [connectedAccountId]);
 
   return stripeConnectInstance;
 };
-
-export default useStripeConnect;
