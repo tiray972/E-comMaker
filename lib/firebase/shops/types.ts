@@ -16,8 +16,4 @@ export type Shop = {
     requirementsDisabled: boolean;
     detailsSubmitted: boolean;
   };
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> 527d905 (types shops update)
