@@ -2,32 +2,28 @@
 
 import { useEffect, useState } from 'react';
 import { StripeConnectSignupButton } from '@/components/stripe/StripeConnectSignupButton';
-import { updateUser } from '@/lib/firebase/users';
 import { auth } from '@/lib/firebase/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase/firebase';
+import { getShop, updateShopStripeStatus } from '@/lib/firebase/shops';
 import { useStripeConnect } from '@/hooks/useStripeConnect';
+import type { Shop } from '@/lib/firebase/shops/types';
 
 export default function StripePage() {
   const [user, setUser] = useState<any>(null);
+  const [shop, setShop] = useState<Shop | null>(null);
   const [loading, setLoading] = useState(true);
-  const [stripeAccountId, setStripeAccountId] = useState<string | null>(null);
   
   // Initialize Stripe Connect if we have an account ID
-  const stripeConnect = useStripeConnect(stripeAccountId);
+  const stripeConnect = useStripeConnect(shop?.stripeAccountId);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
-        // Check if user has a Stripe account
-        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          if (userData.stripeAccountId) {
-            setStripeAccountId(userData.stripeAccountId);
-          }
+        // Fetch the shop owned by this user
+        const shopData = await getShop(firebaseUser.uid);
+        if (shopData) {
+          setShop(shopData as Shop);
         }
       }
       setLoading(false);
@@ -36,9 +32,24 @@ export default function StripePage() {
   }, []);
 
   const handleAccountCreated = async (accountId: string) => {
-    if (!user) return;
-    await updateUser(user.uid, { stripeAccountId: accountId });
-    setStripeAccountId(accountId);
+    if (!user || !shop) return;
+    
+    await updateShopStripeStatus(user.uid, {
+      accountId,
+      status: 'pending',
+      details: {
+        chargesEnabled: false,
+        payoutsEnabled: false,
+        requirementsDisabled: false,
+        detailsSubmitted: false
+      }
+    });
+
+    setShop(prev => prev ? {
+      ...prev,
+      stripeAccountId: accountId,
+      stripeAccountStatus: 'pending'
+    } : null);
   };
 
   if (loading) {
@@ -49,14 +60,19 @@ export default function StripePage() {
     return <div className="p-8">Please log in to connect your Stripe account.</div>;
   }
 
+  if (!shop) {
+    return <div className="p-8">You need to create a shop before connecting Stripe.</div>;
+  }
+
   return (
     <div className="max-w-2xl mx-auto p-8">
       <h1 className="text-2xl font-bold mb-6">Stripe Connect Integration</h1>
       
-      {stripeAccountId ? (
+      {shop.stripeAccountId ? (
         <div className="space-y-4">
           <div className="p-4 bg-green-50 text-green-700 rounded-lg">
-            Your Stripe account is connected! Account ID: {stripeAccountId}
+            <p>Your shop's Stripe account is connected!</p>
+            <p className="text-sm mt-1">Status: {shop.stripeAccountStatus}</p>
           </div>
           <button
             onClick={() => {
@@ -72,7 +88,7 @@ export default function StripePage() {
       ) : (
         <div>
           <p className="mb-4 text-gray-600">
-            Connect your Stripe account to start accepting payments.
+            Connect a Stripe account to start accepting payments for {shop.name}.
           </p>
           <StripeConnectSignupButton onAccountCreated={handleAccountCreated} />
         </div>
