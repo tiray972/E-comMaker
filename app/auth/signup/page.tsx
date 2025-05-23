@@ -38,13 +38,13 @@ export default function SignUp() {
     }
 
     try {
-        const user = await signUpWithEmail(email, password);
+      const user = await signUpWithEmail(email, password);
 
       if (!user || !user.uid) {
-                throw new Error("L'utilisateur n'a pas pu être créé.");
+        throw new Error("L'utilisateur n'a pas pu être créé.");
       }
 
-        const newShop: Shop = {
+      const newShop: Shop = {
         name: `${name}'s Shop`,
         ownerId: user.uid,
         slug: `${name.toLowerCase().replace(/\s+/g, "-")}-shop`,
@@ -53,7 +53,7 @@ export default function SignUp() {
       };
       const shopRef = await createShop(newShop);
 
-            const newUser: User = {
+      const newUser: User = {
         uid: user.uid,
         email: user.email,
         username: name,
@@ -64,10 +64,8 @@ export default function SignUp() {
       };
       await createUser(newUser);
 
-      // Rediriger vers le dashboard de la boutique
       router.push(`/dashboard/${shopRef.id}`);
-    } catch (error) {
-      console.error("Erreur lors de l'inscription :", error);
+    } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
         setError("Cet email est déjà utilisé.");
       } else {

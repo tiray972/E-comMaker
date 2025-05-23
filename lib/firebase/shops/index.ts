@@ -9,11 +9,16 @@ const shopsCol = collection(db, "shops");
 // Créer une boutique
 export async function createShop(shop: Shop) {
   const shopRef = doc(shopsCol);
-  await setDoc(shopRef, {
+  const shopData = {
     ...shop,
     createdAt: Timestamp.now(),
-    stripeAccountStatus: shop.stripeAccountId ? 'pending' : undefined,
-  });
+  };
+
+  if (shop.stripeAccountId) {
+    shopData.stripeAccountStatus = 'pending';
+  }
+
+  await setDoc(shopRef, shopData);
   return shopRef;
 }
 
