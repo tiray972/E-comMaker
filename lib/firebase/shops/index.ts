@@ -30,7 +30,12 @@ export async function createShop(shop: Shop) {
 export async function getShop(shopId: string) {
   const shopRef = doc(shopsCol, shopId);
   const snap = await getDoc(shopRef);
-  return snap.exists() ? snap.data() : null;
+  if (!snap.exists()) return null;
+  
+  return {
+    id: snap.id,
+    ...snap.data()
+  };
 }
 
 // Lire toutes les boutiques
