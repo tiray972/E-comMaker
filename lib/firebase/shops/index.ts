@@ -1,7 +1,8 @@
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
+import { app } from "../firebase";
 import { Shop } from "./types"; // À créer pour typer les shops
 
-const db = getFirestore();
+const db = getFirestore(app);
 const shopsCol = collection(db, "shops");
 
 // Créer une boutique
@@ -24,7 +25,10 @@ export async function getShop(shopId: string) {
 // Lire toutes les boutiques
 export async function getAllShops() {
   const snap = await getDocs(shopsCol);
-  return snap.docs.map(doc => doc.data());
+  return snap.docs.map((doc) => ({
+    id: doc.id, // Include the document ID
+    ...doc.data(),
+  }));
 }
 
 // Mettre à jour une boutique
