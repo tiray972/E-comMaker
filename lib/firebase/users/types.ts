@@ -6,5 +6,5 @@ export type User = {
   username: string; // Ajout du champ username
   avatarUrl?: string;
   createdAt?: any; // Timestamp
-  shopId?: string;
+  shopIds?: string[]; // Un utilisateur peut être lié à plusieurs boutiques
 };
