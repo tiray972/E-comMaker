@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { doc, getDoc, updateDoc, collection, getDocs } from "firebase/firestore";
 import { db, app } from "@/lib/firebase/firebase";
@@ -10,14 +10,7 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Pencil, Settings, X } from "lucide-react";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { useTheme } from "next-themes";
-=======
->>>>>>> cd38d92 (creation des parametres, et du profile avec banniere et photo de profil, truc a changer sa marche pas)
-=======
-import { useTheme } from "next-themes";
->>>>>>> 9496e34 (add pricing page, profile and settings)
 
 export default function ProfilePage() {
   const [user, setUser] = useState<import("firebase/auth").User | null>(null);
@@ -30,14 +23,7 @@ export default function ProfilePage() {
   const [showSettings, setShowSettings] = useState(false);
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
-<<<<<<< HEAD
-<<<<<<< HEAD
   const { theme } = useTheme();
-=======
->>>>>>> cd38d92 (creation des parametres, et du profile avec banniere et photo de profil, truc a changer sa marche pas)
-=======
-  const { theme } = useTheme();
->>>>>>> 9496e34 (add pricing page, profile and settings)
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -123,15 +109,7 @@ export default function ProfilePage() {
           <Button
             variant="ghost"
             size="icon"
-<<<<<<< HEAD
-<<<<<<< HEAD
             className={`absolute right-4 top-4 ${theme === "dark" ? "bg-black text-white hover:bg-black/80" : "bg-white text-black hover:bg-gray-200"}`}
-=======
-            className="absolute right-4 top-4 bg-white/80 hover:bg-white"
->>>>>>> cd38d92 (creation des parametres, et du profile avec banniere et photo de profil, truc a changer sa marche pas)
-=======
-            className={`absolute right-4 top-4 ${theme === "dark" ? "bg-black text-white hover:bg-black/80" : "bg-white text-black hover:bg-gray-200"}`}
->>>>>>> 9496e34 (add pricing page, profile and settings)
             onClick={() => setShowSettings(true)}
             type="button"
           >

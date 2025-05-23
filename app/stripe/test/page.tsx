@@ -1,37 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-export default function StripeTestPage() {
+export default function TestPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handlePay = async () => {
+  const handleTest = async () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/stripe/create-checkout-session', {
+      const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
           connectedAccountId: 'acct_1RRZVePr6yLz3vxE',
-=======
-          connectedAccountId: 'acct_1RRVdMPu9vr1dayc',
->>>>>>> b1f8a01 (stripe 2mepart not finish)
-=======
-          connectedAccountId: 'acct_1RRYTyQ9pai1D0sw',
->>>>>>> a3f155e (update stripe)
-=======
-          connectedAccountId: 'acct_1RRZVePr6yLz3vxE',
->>>>>>> 42829ef (stripe finish)
           line_items: [
             {
               price_data: {
                 currency: 'eur',
-                product_data: { name: 'Test Produit' },
+                product_data: {
+                  name: 'Test Produit',
+                },
                 unit_amount: 1000, // 10.00€
               },
               quantity: 1,
@@ -43,7 +33,7 @@ export default function StripeTestPage() {
         }),
       });
 
-      const data = await res.json();
+      const data = await response.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
@@ -60,7 +50,7 @@ export default function StripeTestPage() {
     <div style={{ maxWidth: 400, margin: '2rem auto', textAlign: 'center' }}>
       <h2>Test Paiement Stripe Connect</h2>
       <button
-        onClick={handlePay}
+        onClick={handleTest}
         disabled={loading}
         style={{
           padding: '1rem 2rem',
