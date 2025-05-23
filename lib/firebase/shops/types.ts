@@ -9,4 +9,11 @@ export type Shop = {
   isActive: boolean;
   socialLinks?: Record<string, string>;
   customDomain?: string;
+  stripeAccountStatus?: 'pending' | 'active' | 'restricted' | 'rejected';
+  stripeAccountDetails?: {
+    chargesEnabled: boolean;
+    payoutsEnabled: boolean;
+    requirementsDisabled: boolean;
+    detailsSubmitted: boolean;
+  };
 };

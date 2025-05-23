@@ -1,5 +1,5 @@
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
-import { Shop } from "./types"; // À créer pour typer les shops
+import { Shop } from "./types";
 
 const db = getFirestore();
 const shopsCol = collection(db, "shops");
@@ -10,6 +10,7 @@ export async function createShop(shop: Shop) {
   await setDoc(shopRef, {
     ...shop,
     createdAt: Timestamp.now(),
+    stripeAccountStatus: shop.stripeAccountId ? 'pending' : undefined,
   });
   return shopRef;
 }
@@ -24,13 +25,28 @@ export async function getShop(shopId: string) {
 // Lire toutes les boutiques
 export async function getAllShops() {
   const snap = await getDocs(shopsCol);
-  return snap.docs.map(doc => doc.data());
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
 // Mettre à jour une boutique
 export async function updateShop(shopId: string, data: Partial<Shop>) {
   const shopRef = doc(shopsCol, shopId);
   await updateDoc(shopRef, data);
+}
+
+// Mettre à jour le statut Stripe d'une boutique
+export async function updateShopStripeStatus(shopId: string, stripeData: {
+  accountId: string;
+  status: Shop['stripeAccountStatus'];
+  details?: Shop['stripeAccountDetails'];
+}) {
+  const shopRef = doc(shopsCol, shopId);
+  await updateDoc(shopRef, {
+    stripeAccountId: stripeData.accountId,
+    stripeAccountStatus: stripeData.status,
+    stripeAccountDetails: stripeData.details,
+    updatedAt: Timestamp.now(),
+  });
 }
 
 // Supprimer une boutique
