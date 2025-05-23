@@ -9,7 +9,7 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { app } from "@/lib/firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
-import type { AppUser } from "@/lib/firebase/users/types";
+import type { User as AppUser} from "@/lib/firebase/users/types";
 
 export default function LandingHeader() {
   const [isScrolled, setIsScrolled] = useState(false);

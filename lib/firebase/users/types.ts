@@ -9,5 +9,5 @@ export type User = {
 >>>>>>> 19fe231 (push user & shops)
   avatarUrl?: string;
   createdAt?: any; // Timestamp
-  shopId?: string;
+  shopIds?: string[]; // Un utilisateur peut être lié à plusieurs boutiques
 };

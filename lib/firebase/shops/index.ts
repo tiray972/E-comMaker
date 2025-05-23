@@ -68,3 +68,20 @@ export async function deleteShop(shopId: string) {
   const shopRef = doc(shopsCol, shopId);
   await deleteDoc(shopRef);
 }
+
+
+// Mettre à jour le statut Stripe d'une boutique
+export async function updateShopStripeStatus(shopId: string, stripeData: {
+  accountId: string;
+  status: Shop['stripeAccountStatus'];
+  details?: Shop['stripeAccountDetails'];
+}) {
+  const shopRef = doc(shopsCol, shopId);
+  await updateDoc(shopRef, {
+    stripeAccountId: stripeData.accountId,
+    stripeAccountStatus: stripeData.status,
+    stripeAccountDetails: stripeData.details,
+    updatedAt: Timestamp.now(),
+  });
+}
+
