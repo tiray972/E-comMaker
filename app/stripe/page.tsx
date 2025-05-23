@@ -77,31 +77,80 @@ export default function Home() {
 =======
 import { useEffect, useState } from 'react';
 import { StripeConnectSignupButton } from '@/components/stripe/StripeConnectSignupButton';
-import { updateUser } from '@/lib/firebase/users';
-// Importe ton instance Firebase Auth
-import { auth } from '@/lib/firebase/firebase'; // adapte le chemin selon ton projet
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { auth } from '@/lib/firebase/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { getShop, updateShopStripeStatus } from '@/lib/firebase/shops';
+import { useStripeConnect } from '@/hooks/useStripeConnect';
+import type { Shop } from '@/lib/firebase/shops/types';
 
+<<<<<<< HEAD
 export default function Page() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
 >>>>>>> 3f2027a (	modified:   app/stripe/page.tsx)
+=======
+export default function StripePage() {
+  const [user, setUser] = useState<any>(null);
+  const [shop, setShop] = useState<Shop | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  // Initialize Stripe Connect if we have an account ID
+  const stripeConnect = useStripeConnect(shop?.stripeAccountId);
+>>>>>>> ba9caa9 (push)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        // Fetch the shop owned by this user
+        const shopData = await getShop(firebaseUser.uid);
+        if (shopData) {
+          setShop(shopData as Shop);
+        }
+      }
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
   const handleAccountCreated = async (accountId: string) => {
-    if (!user) return;
-    await updateUser(user.uid, { stripeAccountId: accountId });
-    alert('Compte Stripe créé et enregistré !');
+    if (!user || !shop) return;
+    
+    await updateShopStripeStatus(user.uid, {
+      accountId,
+      status: 'pending',
+      details: {
+        chargesEnabled: false,
+        payoutsEnabled: false,
+        requirementsDisabled: false,
+        detailsSubmitted: false
+      }
+    });
+
+    setShop(prev => prev ? {
+      ...prev,
+      stripeAccountId: accountId,
+      stripeAccountStatus: 'pending'
+    } : null);
   };
+
+  if (loading) {
+    return <div className="p-8">Loading...</div>;
+  }
+
+  if (!user) {
+    return <div className="p-8">Please log in to connect your Stripe account.</div>;
+  }
+
+  if (!shop) {
+    return <div className="p-8">You need to create a shop before connecting Stripe.</div>;
+  }
 
   return (
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ba9caa9 (push)
     <div className="max-w-2xl mx-auto p-8">
       <h1 className="text-2xl font-bold mb-6">Stripe Connect Integration</h1>
       
@@ -121,6 +170,7 @@ export default function Page() {
           >
             Update Account Settings
           </button>
+<<<<<<< HEAD
 =======
     <div className="container">
       <div className="banner">
@@ -177,6 +227,8 @@ export default function Page() {
             </a>
           </p>
 >>>>>>> a3f155e (update stripe)
+=======
+>>>>>>> ba9caa9 (push)
         </div>
       ) : (
         <div>
@@ -186,11 +238,14 @@ export default function Page() {
           <StripeConnectSignupButton onAccountCreated={handleAccountCreated} />
         </div>
       )}
+<<<<<<< HEAD
 =======
     <div>
       <h2>Inscription Stripe Connect</h2>
       <StripeConnectSignupButton onAccountCreated={handleAccountCreated} />
 >>>>>>> 3f2027a (	modified:   app/stripe/page.tsx)
+=======
+>>>>>>> ba9caa9 (push)
     </div>
   );
 }
