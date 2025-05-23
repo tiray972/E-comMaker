@@ -1,49 +1,31 @@
-import { redirect, notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import DashboardHeader from '@/components/dashboard/header';
 import DashboardSidebar from '@/components/dashboard/sidebar';
-import { getShop, getAllShops } from '@/lib/firebase/shops';
+import { getShop } from '@/lib/firebase/shops';
 import type { Shop } from '@/lib/firebase/shops/types';
 import DashboardAuthWrapper from './DashboardAuthWrapper';
-
-// Cette fonction est requise pour le build statique
-export async function generateStaticParams() {
-  try {
-    const shops = await getAllShops();
-    // S'assurer que chaque shop a un ID
-    const validShops = shops.filter(shop => shop.id);
-    
-    if (validShops.length === 0) {
-      console.warn("No valid shops found for static generation");
-      return [];
-    }
-
-    return validShops.map((shop) => ({
-      shopId: shop.id
-    }));
-  } catch (error) {
-    console.error("Error generating static params:", error);
-    return [];
-  }
-}
 
 export default async function ShopDashboard({ params }: { params: { shopId: string } }) {
   try {
     if (!params.shopId) {
-      return notFound();
+      redirect('/');
     }
 
-    // Récupérer les données de la boutique
+    // Fetch shop data
     const shop: Shop | null = await getShop(params.shopId);
 
-    // Si la boutique n'existe pas, rediriger vers la page 404
+    // Redirect if shop is not found
     if (!shop) {
-      return notFound();
+      redirect('/');
     }
 
+    // Convert `createdAt` to a plain string
+    const createdAt = new Date(shop.createdAt.seconds * 1000).toLocaleDateString();
+
     return (
-      <DashboardAuthWrapper shop={shop}>
+      <DashboardAuthWrapper shop={{ ...shop, createdAt }}>
         <div className="flex min-h-screen">
           <DashboardSidebar />
           <div className="flex-1">
@@ -78,9 +60,7 @@ export default async function ShopDashboard({ params }: { params: { shopId: stri
                     <CardTitle className="text-sm font-medium">Created At</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold">
-                      {new Date(shop.createdAt.seconds * 1000).toLocaleDateString()}
-                    </div>
+                    <div className="text-3xl font-bold">{createdAt}</div>
                     <p className="text-xs text-muted-foreground mt-1">Date of creation</p>
                   </CardContent>
                 </Card>
