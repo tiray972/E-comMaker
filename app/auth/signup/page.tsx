@@ -8,6 +8,7 @@ import { createShop } from "@/lib/firebase/shops";
 import { User } from "@/lib/firebase/users/types";
 import { Shop } from "@/lib/firebase/shops/types";
 import { useTheme } from "next-themes";
+import { generateUniqueId } from "@/lib/utils"; // Import the unique ID generator
 
 export default function SignUp() {
   const [name, setName] = useState("");
@@ -45,6 +46,7 @@ export default function SignUp() {
       }
 
       const newShop: Shop = {
+        id: generateUniqueId(), // Ensure `id` is included
         name: `${name}'s Shop`,
         ownerId: user.uid,
         slug: `${name.toLowerCase().replace(/\s+/g, "-")}-shop`,
@@ -89,6 +91,7 @@ export default function SignUp() {
 
       const generatedName = user.displayName || "Utilisateur";
       const newShop: Shop = {
+        id: generateUniqueId(), // Ensure `id` is included
         name: `${generatedName}'s Shop`,
         ownerId: user.uid,
         slug: `${generatedName.toLowerCase().replace(/\s+/g, "-")}-shop`,
@@ -99,7 +102,7 @@ export default function SignUp() {
 
       const newUser: User = {
         uid: user.uid,
-        email: user.email || "",
+        email: user.email || "", // Default to an empty string if email is null
         username: generatedName,
         displayName: generatedName,
         role: "seller",

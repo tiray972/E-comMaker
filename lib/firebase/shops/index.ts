@@ -1,5 +1,4 @@
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
-
 import { Shop } from "./types";
 import { app } from "../firebase";
 
@@ -23,18 +22,16 @@ export async function createShop(shop: Shop) {
 }
 
 // Lire une boutique par ID
-export async function getShop(shopId: string) {
+export async function getShop(shopId: string): Promise<Shop | null> {
   const shopRef = doc(shopsCol, shopId);
-  const snap = await getDoc(shopRef);
-  if (!snap.exists()) return null;
+  const shopSnap = await getDoc(shopRef);
 
-  const data = snap.data();
+  if (!shopSnap.exists()) {
+    console.error(`Boutique introuvable avec l'ID : ${shopId}`);
+    return null;
+  }
 
-  return {
-    id: snap.id,
-    ...data,
-    createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000).toISOString() : null,
-  };
+  return shopSnap.data() as Shop;
 }
 
 // Lire toutes les boutiques
@@ -42,7 +39,6 @@ export async function getAllShops() {
   const snap = await getDocs(shopsCol);
 
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
 }
 
 // Mettre à jour une boutique
@@ -51,14 +47,11 @@ export async function updateShop(shopId: string, data: Partial<Shop>) {
   await updateDoc(shopRef, data);
 }
 
-
-
 // Supprimer une boutique
 export async function deleteShop(shopId: string) {
   const shopRef = doc(shopsCol, shopId);
   await deleteDoc(shopRef);
 }
-
 
 // Mettre à jour le statut Stripe d'une boutique
 export async function updateShopStripeStatus(shopId: string, stripeData: {

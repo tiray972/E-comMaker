@@ -1,11 +1,18 @@
+import React, { useContext } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import DashboardHeader from '@/components/dashboard/header';
 import DashboardSidebar from '@/components/dashboard/sidebar';
 import SitesList from '@/components/dashboard/sites-list';
 import RecentActivity from '@/components/dashboard/recent-activity';
+import { redirect } from 'next/navigation';
 
 export default function DashboardPage() {
+  
+
+  
+
   return (
     <div className="flex min-h-screen">
       <DashboardSidebar />
@@ -75,6 +82,9 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             </div>
+          </div>
+          <div>
+            
           </div>
         </main>
       </div>

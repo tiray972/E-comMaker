@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts","**/*.js", "**/*.tsx", ".next/types/**/*.ts", "app/api/account/route.js"],
+  "include": ["next-env.d.ts", "**/*.ts","**/*.js", "**/*.tsx", ".next/types/**/*.ts", "app/api/account/route.js", "app/dashboard/[shopId]/ClientAuthProvider.tsx"],
   "exclude": ["node_modules"]
 }

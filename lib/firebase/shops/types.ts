@@ -1,4 +1,5 @@
 export type Shop = {
+  id: string; // Added id property
   name: string;
   description?: string;
   logoUrl?: string;

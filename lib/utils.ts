@@ -12,3 +12,7 @@ export function getStripe() {
   const Stripe = require('stripe');
   return new Stripe(stripeKey, { apiVersion: '2023-10-16' });
 }
+
+export function generateUniqueId(): string {
+  return Math.random().toString(36).substr(2, 9);
+}
