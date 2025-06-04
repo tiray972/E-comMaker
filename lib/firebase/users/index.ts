@@ -1,4 +1,4 @@
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp, query, where } from "firebase/firestore";
 import { auth } from "../firebase";
 import { User } from "./types"; // À créer pour typer les users
 import { admin } from '@/lib/firebase/admin'; // Assurez-vous que le chemin est correct
@@ -64,13 +64,11 @@ export async function getServerAuthUser() {
 }
 
 export async function getUserShops(userId: string) {
-  const shopsSnapshot = await admin
-    .firestore()
-    .collection("shops")
-    .where("ownerId", "==", userId)
-    .get();
+  const shopsCol = collection(db, "shops");
+  const q = query(shopsCol, where("ownerId", "==", userId));
+  const querySnapshot = await getDocs(q);
 
-  return shopsSnapshot.docs.map((doc) => ({
+  return querySnapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
