@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ status: 'success' });
   } catch (error) {
     console.error("Erreur lors de la création du cookie de session :", error);
-    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    return NextResponse.json({ error: 'Invalid token ' }, { status: 401 });
   }
 }
 
