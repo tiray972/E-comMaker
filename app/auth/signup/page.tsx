@@ -45,15 +45,14 @@ export default function SignUp() {
         throw new Error("L'utilisateur n'a pas pu être créé.");
       }
 
-      const newShop: Shop = {
-        id: generateUniqueId(), // Ensure `id` is included
+      const newShop: Omit<Shop, "id"> = {
         name: `${name}'s Shop`,
         ownerId: user.uid,
         slug: `${name.toLowerCase().replace(/\s+/g, "-")}-shop`,
         isActive: true,
         createdAt: new Date(),
       };
-      const shopRef = await createShop(newShop);
+      const shopRef = await createShop(newShop); // Utiliser l'ID généré par Firebase
 
       const newUser: User = {
         uid: user.uid,
@@ -61,7 +60,7 @@ export default function SignUp() {
         username: name,
         displayName: name,
         role: "seller",
-        shopIds: [shopRef.id],
+        shopIds: [shopRef.id], // Utiliser l'ID généré
         createdAt: new Date(),
       };
       await createUser(newUser);
@@ -90,15 +89,14 @@ export default function SignUp() {
       }
 
       const generatedName = user.displayName || "Utilisateur";
-      const newShop: Shop = {
-        id: generateUniqueId(), // Ensure `id` is included
+      const newShop: Omit<Shop, "id"> = {
         name: `${generatedName}'s Shop`,
         ownerId: user.uid,
         slug: `${generatedName.toLowerCase().replace(/\s+/g, "-")}-shop`,
         isActive: true,
         createdAt: new Date(),
       };
-      const shopRef = await createShop(newShop);
+      const shopRef = await createShop(newShop); // Utiliser l'ID généré par Firebase
 
       const newUser: User = {
         uid: user.uid,
@@ -106,7 +104,7 @@ export default function SignUp() {
         username: generatedName,
         displayName: generatedName,
         role: "seller",
-        shopIds: [shopRef.id],
+        shopIds: [shopRef.id], // Utiliser l'ID généré
         createdAt: new Date(),
       };
       await createUser(newUser);

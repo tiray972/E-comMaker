@@ -6,8 +6,8 @@ const db = getFirestore(app);
 const shopsCol = collection(db, "shops");
 
 // Créer une boutique
-export async function createShop(shop: Shop) {
-  const shopRef = doc(shopsCol);
+export async function createShop(shop: Omit<Shop, "id">) {
+  const shopRef = doc(shopsCol); // Firebase génère automatiquement un ID
   const shopData = {
     ...shop,
     createdAt: Timestamp.now(),
@@ -18,7 +18,7 @@ export async function createShop(shop: Shop) {
   }
 
   await setDoc(shopRef, shopData);
-  return shopRef;
+  return { id: shopRef.id, ...shopData }; // Retourner l'ID généré par Firebase
 }
 
 // Lire une boutique par ID
