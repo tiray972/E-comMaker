@@ -62,3 +62,16 @@ export function getAuth() {
 export async function getServerAuthUser() {
   throw new Error('Cette fonction doit être appelée côté serveur via app/api/session/route.ts');
 }
+
+export async function getUserShops(userId: string) {
+  const shopsSnapshot = await admin
+    .firestore()
+    .collection("shops")
+    .where("ownerId", "==", userId)
+    .get();
+
+  return shopsSnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+}
