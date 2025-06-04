@@ -30,7 +30,7 @@ export default function ShopDashboard() {
           <main className="p-6">
             <div className="mb-8">
               <h1 className="text-3xl font-bold mb-2">{shop.name} Dashboard</h1>
-              <p className="text-muted-foreground">Manage your shop settings, products, and more.</p>
+              <p className="text-muted-foreground">Manage yoshop settings, products, and more.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
