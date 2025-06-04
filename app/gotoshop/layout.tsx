@@ -1,6 +1,8 @@
 // app/dashboard/[shopId]/layout.tsx
 
 import type { Metadata } from 'next';
+import { ThemeProvider } from 'next-themes';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -9,14 +11,17 @@ export const metadata: Metadata = {
 
 export default function ShopLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: { shopId: string };
 }) {
   return (
-    <>
-      {children}
-    </>
+    <html lang="en" suppressHydrationWarning>
+          <body >
+            <ThemeProvider attribute="class" defaultTheme="light">
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </body>
+        </html>
   );
 }

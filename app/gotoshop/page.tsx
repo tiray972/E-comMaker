@@ -34,7 +34,12 @@ export default function MyShopsPage() {
   }, [router]);
 
   if (loading) {
-    return <div className="p-8">Loading...</div>;
+    return (
+      <div className="p-8">
+        <h1 className="text-3xl font-bold mb-6">Mes Boutiques</h1>
+        <p className="text-gray-600">Chargement des boutiques...</p>
+      </div>
+    );
   }
 
   return (
@@ -49,8 +54,8 @@ export default function MyShopsPage() {
               <h2 className="text-xl font-bold">{shop.name}</h2>
               <p className="text-gray-600">ID: {shop.id}</p>
               <p className="text-gray-600">Slug: {shop.slug}</p>
-              <Link href={`/dashboard/${shop.id}`}>
-                <a className="text-blue-500 hover:underline">Accéder au Dashboard</a>
+              <Link href={`/dashboard/${shop.id}`} className="text-blue-500 hover:underline">
+                Accéder au Dashboard
               </Link>
             </li>
           ))}
@@ -59,3 +64,4 @@ export default function MyShopsPage() {
     </div>
   );
 }
+
