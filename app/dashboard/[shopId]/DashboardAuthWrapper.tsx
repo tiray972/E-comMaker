@@ -23,7 +23,7 @@ export default function DashboardAuthWrapper({ shop, children }: Props) {
 
       // Vérifier si l'utilisateur est le propriétaire de la boutique
       if (shop.ownerId !== user.uid) {
-        router.push("/");
+        router.push(`/dashboard/${user.uid}`); // Redirige vers le tableau de bord de l'utilisateur
         return;
       }
     });

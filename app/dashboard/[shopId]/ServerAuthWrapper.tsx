@@ -15,7 +15,7 @@ export default async function ServerAuthWrapper({
   params: { shopId: string };
 }) {
   const cookieStore = cookies();
-  const sessionCookie = cookieStore.get('session')?.value;
+  const sessionCookie = (await cookieStore).get('session')?.value;
 
   if (!sessionCookie) {
     console.error('⛔️ Aucun cookie de session trouvé');
