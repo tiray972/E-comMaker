@@ -17,4 +17,5 @@ export type Shop = {
     requirementsDisabled: boolean;
     detailsSubmitted: boolean;
   };
+  activeThemeId?: string; // 👈 Thème actif
 };
