@@ -17,6 +17,7 @@ export default function DashboardAuthWrapper({ shop, children }: Props) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
+        
         router.push("/auth/login");
         return;
       }
