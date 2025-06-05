@@ -46,7 +46,7 @@ export default function Login() {
     setIsLoading(true);
     try {
       await signInWithGoogle();
-      router.push("/dashboard");
+      router.push("/dashboard/");
     } catch (error) {
       setError("Erreur lors de la connexion avec Google.");
     } finally {
@@ -156,7 +156,7 @@ export default function Login() {
                 <path fill="#EA4335" d="M44.5 20H24v8.5h11.7c-1.2 3.2-4.1 5.5-7.7 5.5-2.2 0-4.2-.7-5.7-2.1l-7 5.4C18.5 44.3 21.1 45 24 45c10.5 0 19.5-7.6 21-17.5 0-1.4-.1-2.7-.3-4z"/>
               </g>
             </svg>
-            {isLoading ? "Connexion..." : "Se connecter avec Google"}
+            {isLoading ? "" : "Se connecter avec Google"}
           </button>
         </form>
         <div className="flex justify-center mt-6">
