@@ -35,7 +35,7 @@ export default async function ServerAuthWrapper({
 
     if (!shop || shop.ownerId !== decodedClaims.uid) {
       console.error('⛔️ Boutique introuvable ou accès non autorisé');
-      redirect('/auth/login');
+      redirect('/gotoshop');
     }
 
     // Convert timestamps
@@ -57,6 +57,6 @@ export default async function ServerAuthWrapper({
     return <AuthProvider value={authData}>{children}</AuthProvider>;
   } catch (error) {
     console.error('❌ Erreur session/shop :', error);
-    redirect('/auth/login');
+    redirect('/gotoshop');
   }
 }
