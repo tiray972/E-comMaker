@@ -6,6 +6,7 @@ import { signInWithEmail, signInWithGoogle } from "@/lib/firebase/auth";
 import { CircleUserRound } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { getUser } from '@/lib/firebase/users/index';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -28,13 +29,25 @@ export default function Login() {
     }
 
     try {
-      await signInWithEmail(email, password);
-      router.push("/dashboard");
+      const user = await signInWithEmail(email, password);
+
+      if (!user || !user.uid) {
+        throw new Error("L'utilisateur n'a pas pu être authentifié.");
+      }
+
+      const userData = await getUser(user.uid);
+
+      if (!userData || !userData.shopIds || userData.shopIds.length === 0) {
+        throw new Error("Aucun shop trouvé pour cet utilisateur.");
+      }
+
+      const shopId = userData.shopIds[0];
+      router.push(`/dashboard/${shopId}`);
     } catch (error) {
       if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
         setError("Email ou mot de passe incorrect.");
       } else {
-        setError("Une erreur est survenue. Veuillez réessayer.");
+        setError(error.message || "Une erreur est survenue. Veuillez réessayer.");
       }
     } finally {
       setIsLoading(false);
@@ -44,11 +57,24 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     setError("");
     setIsLoading(true);
+
     try {
-      await signInWithGoogle();
-      router.push("/dashboard/");
+      const user = await signInWithGoogle();
+
+      if (!user || !user.uid) {
+        throw new Error("La connexion avec Google a échoué.");
+      }
+
+      const userData = await getUser(user.uid);
+
+      if (!userData || !userData.shopIds || userData.shopIds.length === 0) {
+        throw new Error("Aucun shop trouvé pour cet utilisateur.");
+      }
+
+      const shopId = userData.shopIds[0];
+      router.push(`/dashboard/${shopId}`);
     } catch (error) {
-      setError("Erreur lors de la connexion avec Google.");
+      setError(error.message || "Une erreur est survenue lors de la connexion avec Google.");
     } finally {
       setIsLoading(false);
     }

@@ -19,7 +19,6 @@ export default function Home() {
         <LandingTemplates />
         <LandingTestimonials />
         <LandingPricing />
-        <LandingCTA />
       </main>
       <LandingFooter />
     </div>
