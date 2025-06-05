@@ -57,18 +57,20 @@ export default function Login() {
   return (
     <div
       className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${
-        theme === "dark"
-          ? "bg-black"
-          : "bg-white"
+        theme === "dark" ? "bg-gradient-to-br from-gray-900 to-black" : "bg-gradient-to-br from-blue-50 to-white"
       }`}
     >
-      <div className="w-full max-w-md">
+      <div
+        className={`w-full max-w-md p-6 rounded-lg ${
+          theme === "dark" ? "shadow-xl bg-neutral-900" : "bg-gradient-to-br from-blue-50 to-white"
+        }`}
+      >
         <form
           onSubmit={handleLogin}
-          className={`space-y-5 flex flex-col items-center justify-center p-8 rounded-xl shadow-lg border ${
+          className={`space-y-5 flex flex-col items-center justify-center p-8 rounded-xl ${
             theme === "dark"
-              ? "bg-neutral-900 border-neutral-800"
-              : "bg-white border-blue-100"
+              ? "shadow-lg border bg-neutral-900 border-neutral-800"
+              : "border bg-gradient-to-br from-blue-50 to-white border-blue-100"
           }`}
         >
           <CircleUserRound
@@ -76,7 +78,7 @@ export default function Login() {
             size={64}
           />
           <h1
-            className={`text-2xl font-bold text-center ${
+            className={`text-3xl font-extrabold text-center ${
               theme === "dark" ? "text-white" : "text-blue-700"
             }`}
           >
@@ -99,7 +101,7 @@ export default function Login() {
           <input
             type="email"
             placeholder="Adresse e-mail"
-            className={`border p-2 w-full rounded outline-none transition-all ${
+            className={`border p-3 w-full rounded-lg outline-none transition-all ${
               theme === "dark"
                 ? "bg-neutral-800 border-neutral-700 text-white placeholder-gray-400 focus:border-teal-400"
                 : "bg-white border-blue-200 text-gray-900 focus:border-teal-400"
@@ -111,7 +113,7 @@ export default function Login() {
           <input
             type="password"
             placeholder="Mot de passe"
-            className={`border p-2 w-full rounded outline-none transition-all ${
+            className={`border p-3 w-full rounded-lg outline-none transition-all ${
               theme === "dark"
                 ? "bg-neutral-800 border-neutral-700 text-white placeholder-gray-400 focus:border-teal-400"
                 : "bg-white border-blue-200 text-gray-900 focus:border-teal-400"
@@ -122,7 +124,7 @@ export default function Login() {
           />
 
           <button
-            className={`w-full py-2 px-4 rounded-lg font-semibold transition-all duration-200 ${
+            className={`w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 ${
               isLoading
                 ? "opacity-50 cursor-not-allowed"
                 : theme === "dark"
@@ -135,7 +137,7 @@ export default function Login() {
             {isLoading ? "Connexion..." : "Se connecter"}
           </button>
           <button
-            className={`flex items-center justify-center gap-2 w-full py-2 px-4 rounded-lg font-semibold border transition-all duration-200 ${
+            className={`flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg font-semibold border transition-all duration-200 ${
               isLoading
                 ? "opacity-50 cursor-not-allowed"
                 : theme === "dark"
