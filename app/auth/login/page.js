@@ -62,14 +62,14 @@ export default function Login() {
     >
       <div
         className={`w-full max-w-md p-6 rounded-lg ${
-          theme === "dark" ? "shadow-xl bg-neutral-900" : "bg-gradient-to-br from-blue-50 to-white"
+          theme === "dark" ? "bg-transparent" : "bg-gradient-to-br from-blue-50 to-white"
         }`}
       >
         <form
           onSubmit={handleLogin}
           className={`space-y-5 flex flex-col items-center justify-center p-8 rounded-xl ${
             theme === "dark"
-              ? "shadow-lg border bg-neutral-900 border-neutral-800"
+              ? "bg-transparent border border-neutral-800"
               : "border bg-gradient-to-br from-blue-50 to-white border-blue-100"
           }`}
         >

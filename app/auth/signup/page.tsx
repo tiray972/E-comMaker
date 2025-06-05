@@ -126,7 +126,7 @@ export default function SignUp() {
       <div
         className={`w-full max-w-md p-6 rounded-lg ${
           theme === "dark"
-            ? "shadow-xl bg-neutral-900"
+            ? "bg-transparent" // Fond transparent sans ombre pour le thème sombre
             : "bg-gradient-to-br from-blue-50 to-white"
         }`}
       >
@@ -134,7 +134,7 @@ export default function SignUp() {
           onSubmit={handleSignUp}
           className={`space-y-5 flex flex-col items-center justify-center p-8 rounded-xl ${
             theme === "dark"
-              ? "shadow-lg border bg-neutral-900 border-neutral-800"
+              ? "bg-transparent border border-neutral-800" // Fond transparent et bordure ajustée pour le formulaire dans le thème sombre
               : "border bg-gradient-to-br from-blue-50 to-white border-blue-100"
           }`}
         >
