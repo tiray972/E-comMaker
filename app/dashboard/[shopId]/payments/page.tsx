@@ -1,7 +1,5 @@
-// app/dashboard/[shopId]/page.tsx
 'use client';
 
-import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -16,53 +14,73 @@ import DashboardAuthWrapper from '@/app/dashboard/[shopId]/DashboardAuthWrapper'
 import { getShop, updateShopStripeStatus } from '@/lib/firebase/shops';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { StripeConnectSignupButton } from '@/components/stripe/StripeConnectSignupButton';
-import { useStripeConnect } from '@/hooks/useStripeConnect';
 import { auth } from '@/lib/firebase/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import type { Shop } from '@/lib/firebase/shops/types';
 
-export default function paiementPage() {
+export default function PaymentMethodsPage() {
   const params = useParams();
   const shopId = typeof params?.shopId === 'string' ? params.shopId : '';
+
   const [user, setUser] = useState<any>(null);
   const [shop, setShop] = useState<Shop | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // Stripe Connect hook
-  const stripeConnect = useStripeConnect(shop?.stripeAccountId);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
         const shopData = await getShop(shopId);
-        if (shopData) {
-          setShop(shopData as Shop);
-        }
+        if (shopData) setShop(shopData as Shop);
       }
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, [shopId]);
 
-  const handleAccountCreated = async (accountId: string) => {
-    if (!user || !shop) return;
-    await updateShopStripeStatus(shopId, {
-      accountId,
-      status: 'pending',
-      details: {
-        chargesEnabled: false,
-        payoutsEnabled: false,
-        requirementsDisabled: false,
-        detailsSubmitted: false
-      }
+  const createOnboardingLink = async (accountId: string) => {
+    const res = await fetch('/api/stripe/create-onboarding-link', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accountId }),
     });
-    setShop(prev => prev ? {
-      ...prev,
-      stripeAccountId: accountId,
-      stripeAccountStatus: 'pending'
-    } : null);
+
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+  };
+
+  const handleAccountCreated = async () => {
+    if (!user) return;
+
+    const res = await fetch('/api/stripe/create-account', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ shopId, userEmail: user.email }),
+    });
+
+    const data = await res.json();
+    if (!data.accountId) return;
+
+    await updateShopStripeStatus(shopId, {
+      accountId: data.accountId,
+      status: "pending",
+      details: { chargesEnabled: false, payoutsEnabled: false, detailsSubmitted: false },
+    });
+
+    setShop(prev => prev
+      ? { ...prev, stripeAccountId: data.accountId, stripeAccountStatus: "pending", stripeAccountDetails: { chargesEnabled: false, payoutsEnabled: false, detailsSubmitted: false } }
+      : null
+    );
+
+    createOnboardingLink(data.accountId);
+  };
+
+  const handleDisconnect = async () => {
+    if (!shop?.stripeAccountId) return;
+
+    await updateShopStripeStatus(shopId, { accountId: "", status: "disconnected", details: null });
+    setShop(prev => prev ? { ...prev, stripeAccountId: null, stripeAccountStatus: "disconnected", stripeAccountDetails: null } : null);
   };
 
   if (loading) return <div>Chargement...</div>;
@@ -75,50 +93,60 @@ export default function paiementPage() {
         <DashboardSidebar />
         <div className="flex-1">
           <DashboardHeader />
-          <main className="p-6">
-            {/* Résumé configuration dynamique */}
-            <Card className="mb-6">
-              <CardContent className="flex flex-wrap gap-6 items-center">
-                <div>
-                  <span className="font-bold">✅ Paiements connectés :</span> {shop.stripeAccountId ? 1 : 0} / 1
-                </div>
-                <div>
-                  <span className="font-bold">🚚 Zones de livraison actives :</span> {shop.shippingZones ? shop.shippingZones.length : 0}
-                </div>
-                <div>
-                  <span className="font-bold">💶 TVA :</span> {shop.taxRate ? shop.taxRate + ' %' : 'Non défini'}
-                </div>
-                <div>
-                  <span className="font-bold">💱 Devise :</span> {shop.currency || 'EUR'}
-                </div>
-              </CardContent>
-            </Card>
-            {/* Moyens de paiement dynamiques */}
+          <main className="p-6 space-y-6">
+            
             <Card>
               <CardHeader>
                 <CardTitle>Moyens de paiement</CardTitle>
                 <CardDescription>Connecte et configure tes passerelles de paiement.</CardDescription>
               </CardHeader>
               <CardContent>
-                {shop.stripeAccountId ? (
-                  <div className="space-y-4">
-                    <div className="p-4 bg-green-50 text-green-700 rounded-lg">
-                      <p>Votre compte Stripe est connecté !</p>
-                      <p className="text-sm mt-1">Statut : {shop.stripeAccountStatus}</p>
+                {!shop.stripeAccountId && (
+                  <Button
+                    onClick={handleAccountCreated}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                  >
+                    Connecter Stripe
+                  </Button>
+                )}
+
+                {shop.stripeAccountId && shop.stripeAccountStatus === 'pending' && (
+                  <div className="space-y-2">
+                    <div className="p-4 bg-yellow-50 text-yellow-700 rounded-lg">
+                      ⚠ Votre compte Stripe est en cours de configuration.
                     </div>
                     <Button
-                      onClick={() => { if (stripeConnect) stripeConnect.open(); }}
-                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                      onClick={() => createOnboardingLink(shop.stripeAccountId!)}
+                      className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition"
                     >
-                      Mettre à jour le compte Stripe
+                      Continuer l’onboarding
                     </Button>
                   </div>
-                ) : (
-                  <div>
-                    <p className="mb-4 text-gray-600">
-                      Connecte un compte Stripe pour commencer à accepter les paiements sur {shop.name}.
-                    </p>
-                    <StripeConnectSignupButton onAccountCreated={handleAccountCreated} />
+                )}
+
+                {shop.stripeAccountId && shop.stripeAccountStatus === 'active' && (
+                  <div className="space-y-2">
+                    <div className="p-4 bg-green-50 text-green-700 rounded-lg">
+                      ✅ Votre compte Stripe est actif.
+                    </div>
+                    <Button
+                      onClick={() => createOnboardingLink(shop.stripeAccountId!)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                    >
+                      Mettre à jour les infos Stripe
+                    </Button>
+                    <Button
+                      onClick={handleDisconnect}
+                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                    >
+                      Délier le compte
+                    </Button>
+                  </div>
+                )}
+
+                {shop.stripeAccountStatus === 'disconnected' && (
+                  <div className="p-4 bg-gray-50 text-gray-700 rounded-lg">
+                    ❌ Aucun compte Stripe connecté.
                   </div>
                 )}
               </CardContent>

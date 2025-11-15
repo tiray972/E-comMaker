@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { updateShopStripeStatus } from '@/lib/firebase/shops';
+import { stripe } from '@/lib/stripe'; // ton client Stripe
 
 // Stripe recommande d'utiliser le body brut pour vérifier la signature
 export const config = {
@@ -30,10 +32,23 @@ export async function POST(request) {
     return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
   }
 
-  // Traite ici les événements Stripe (exemple : paiement réussi)
+  // Traite ici les événements Stripe
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     // ...traitement (ex: mettre à jour Firestore)
+  } else if (event.type === 'account.updated') {
+    const account = event.data.object;
+    // Met à jour le shop en base
+    await updateShopStripeStatus(account.metadata.shopId, {
+      accountId: account.id,
+      status: account.charges_enabled ? 'active' : 'pending',
+      details: {
+        chargesEnabled: account.charges_enabled,
+        payoutsEnabled: account.payouts_enabled,
+        requirementsDisabled: account.requirements.disabled_reason === null,
+        detailsSubmitted: account.details_submitted,
+      }
+    });
   }
 
   return NextResponse.json({ received: true });

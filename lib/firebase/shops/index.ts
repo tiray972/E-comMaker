@@ -1,3 +1,5 @@
+// lib/firebase/shops/index.ts
+
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
 import { Shop } from "./types";
 import { app } from "../firebase";
@@ -67,4 +69,18 @@ export async function updateShopStripeStatus(shopId: string, stripeData: {
     updatedAt: Timestamp.now(),
   });
 }
+export async function updateShopByStripeAccount(
+  shopId: string,
+  stripeData: {
+    status: Shop['stripeAccountStatus'];
+    details: Shop['stripeAccountDetails'];
+  }
+) {
+  const shopRef = doc(shopsCol, shopId);
 
+  await updateDoc(shopRef, {
+    stripeAccountStatus: stripeData.status,
+    stripeAccountDetails: stripeData.details,
+    updatedAt: Timestamp.now(),
+  });
+}
